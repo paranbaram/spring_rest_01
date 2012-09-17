@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com/DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ice">
+	<select id="getDetail" resultClass="hashmap">
+		SELECT if_name
+		FROM ref_interface
+		WHERE if_id=#if_id#
+	</select>
+	<select id="getIceInfo" resultClass="hashmap">
+		SELECT
+		i.if_id,
+		i.category_id,
+		i.if_name,
+		i.if_type,
+		i.if_url,
+		i.if_wsdl,
+		i.if_ecdd,
+		i.user_id,
+		i.dept_id,
+		i.doc_url,
+		i.memo1,
+		i.spec_in,
+		i.spec_out,
+		i.regdate,
+		c.parent_id,
+		c.depth,
+		c.category_name,
+		c.category_path
+		FROM ref_interface as i, ref_category as c
+		WHERE i.category_id=c.category_id
+		<isNotNull prepend="AND" property="id">
+			i.if_id=#id#
+		</isNotNull>
+		<isNotNull property="order">
+			ORDER BY if_id $order$
+		</isNotNull>
+		<dynamic prepend="LIMIT">
+			<isNotEmpty property="count">
+				#count#
+			</isNotEmpty>
+			<isGreaterThan property="offset" compareValue="0">
+				OFFSET #offset#
+			</isGreaterThan>
+		</dynamic>
+	</select>
+	<select id="getIceInfoByUrl" resultClass="hashmap">
+		SELECT
+		i.if_id,
+		i.category_id,
+		i.if_name,
+		i.if_type,
+		i.if_url,
+		i.if_wsdl,
+		i.if_ecdd,
+		i.user_id,
+		i.dept_id,
+		i.doc_url,
+		i.memo1,
+		i.spec_in,
+		i.spec_out,
+		i.regdate,
+		c.parent_id,
+		c.depth,
+		c.category_name,
+		c.category_path
+		FROM ref_interface as i, ref_category as c
+		WHERE i.category_id=c.category_id
+		<isNotNull prepend="AND">
+			i.if_url=#url#
+		</isNotNull>
+		<isNotNull property="order">
+			ORDER BY if_id $order$
+		</isNotNull>
+		<dynamic prepend="LIMIT">
+			<isNotEmpty property="count">
+				#count#
+			</isNotEmpty>
+			<isGreaterThan property="offset" compareValue="0">
+				OFFSET #offset#
+			</isGreaterThan>
+		</dynamic>
+	</select>
+	<!--
+	<insert id="insertIce" parameterClass="hashmap">
+	</insert>
+	<delete id="deleteIce" parameterClass="hashmap">
+	</delete>
+	<update id="updateIce" parameterClass="hashmap">
+	</update>
+	  -->
+</sqlMap>

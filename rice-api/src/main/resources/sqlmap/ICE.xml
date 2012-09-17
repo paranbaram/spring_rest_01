@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com/DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ice">
+	<select id="getDetail" resultClass="hashmap">
+		SELECT a
+		FROM b
+		WHERE id=#id#
+	</select>
+	<select id="getIceInfo" resultClass="hashmap">
+		SELECT
+		i.id
+		c.parent_id,
+		FROM  i, c
+		WHERE i.category_id=c.category_id
+		<isNotNull prepend="AND" property="id">
+			i.id=#id#
+		</isNotNull>
+		<isNotNull property="order">
+			ORDER BY id $order$
+		</isNotNull>
+		<dynamic prepend="LIMIT">
+			<isNotEmpty property="count">
+				#count#
+			</isNotEmpty>
+			<isGreaterThan property="offset" compareValue="0">
+				OFFSET #offset#
+			</isGreaterThan>
+		</dynamic>
+	</select>
+</sqlMap>
