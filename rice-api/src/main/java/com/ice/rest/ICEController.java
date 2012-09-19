@@ -2,12 +2,14 @@ package com.ice.rest;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,8 @@ public class ICEController {
 	/*pseudo persistance unit uses by the controller*/
 	@Autowired
 	private ICEService iceService;
+	@Autowired
+	private ErrorMessageXmlView errorMessageXmlView;
 	
 	@RequestMapping(value="internalapiinform/{ifId}",method = RequestMethod.GET)
 	public @ResponseBody ICEmodel getICEItem(@PathVariable int ifId) {
@@ -45,24 +49,18 @@ public class ICEController {
 			@RequestParam(value="orderoption", required=false, defaultValue="DESC") String order) {
 		return iceService.getAllItems(page,count,order);
 	}
-	
-	@ResponseStatus(value=HttpStatus.NOT_FOUND)
-	@ExceptionHandler(ResourceNotFoundException.class)
-	public @ResponseBody ErrorMessage handleNotFoundException (ResourceNotFoundException re)
-	{
-		return re.getErrorMessage();
-	}
-	
+
 	@ResponseStatus(value=HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(Exception.class)
-	public @ResponseBody String handleAnyException (Exception ex) 
+	@ExceptionHandler(NullPointerException.class)
+	public ModelAndView handleEmptyException (Exception ex) 
 	{
-		String bodyMsg = "<xml><body>";
+		ErrorMessage errMsg = new ErrorMessage();
+		errMsg.setCategory("system");
+		errMsg.setCode("9402");
+		errMsg.setId("400");
+		errMsg.setMessage("요청 정보를 찾을 수 없습니다.");
 		
-		bodyMsg += ex.getClass().getName() + "\n";
-		bodyMsg += ex.getClass().getSimpleName() + "\n";
-		bodyMsg += "</body></xml>";
-		return bodyMsg;
+		return new ModelAndView(errorMessageXmlView).addObject(ErrorMessage.class.getName(), errMsg);
 	}
 	
 	

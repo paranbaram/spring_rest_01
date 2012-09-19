@@ -1,8 +1,7 @@
 package com.ice.rest;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name="Error")
+@XmlRootElement
 public class ErrorMessage {
 	private String id;
 	private String category;

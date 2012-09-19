@@ -13,20 +13,20 @@ import org.springframework.stereotype.Service;
 
 import com.ice.dao.ICEDAO;
 import com.ice.rest.ICEmodel;
-import com.ice.rest.ResourceNotFoundException;
+import com.ice.rest.RequestInvalidException;
 
 @Service
 public class ICEService {
 	@Autowired
 	private ICEDAO iceDao;
 
-	public ICEmodel getItem (int ifId) throws ResourceNotFoundException {
+	public ICEmodel getItem (int ifId) throws RequestInvalidException {
 		HashMap iceInfo = new HashMap();
 		iceInfo = iceDao.selectIce(ifId);
 		if (null == iceInfo) {
-			//TODO throw exception
-			//TODO make exception class
-			throw new ResourceNotFoundException("Requested resource is not found");
+			//TODO throw exception :NOT FOUND
+			//InvalidRequestException (String msg, String code, String category) {
+			throw new RequestInvalidException("요청 정보를 찾을 수 없습니다.", "9402", "system");
 		}
 		ICEmodel iceItem = new ICEmodel();
 		iceItem = setItem(iceInfo);
@@ -40,7 +40,11 @@ public class ICEService {
 		param.put("count", count);
 		param.put("order", order);
 		
-		List<HashMap> iceInforms = new ArrayList<HashMap>(iceDao.selectAllIce(param));
+		List<HashMap> iceInforms = new ArrayList<HashMap>();
+		iceInforms = iceDao.selectAllIce(param);
+		if (null == iceInforms) {
+			//TODO : throw exception : NOT FOUND
+		}
 		List<ICEmodel> iceItems =  new ArrayList<ICEmodel> ();
 		for (int i = 0; i < iceInforms.size(); i++) {
 			HashMap iceInfo = new HashMap(iceInforms.get(i));
@@ -101,7 +105,12 @@ public class ICEService {
 		param.put("order", order);
 		param.put("url", url);
 		
-		List<HashMap> iceInforms = new ArrayList<HashMap>(iceDao.selectIceByUrl(param));
+		List<HashMap> iceInforms = new ArrayList<HashMap>();
+		iceInforms = iceDao.selectIceByUrl(param);
+		if (null == iceInforms) {
+			//TODO : throw exception : NOT FOUND
+		}
+		
 		List<ICEmodel> iceItems =  new ArrayList<ICEmodel> ();
 		for (int i = 0; i < iceInforms.size(); i++) {
 			HashMap iceInfo = new HashMap(iceInforms.get(i));

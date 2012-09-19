@@ -42,13 +42,6 @@ public class ICEDAOTest extends AbstractTransactionalJUnit4SpringContextTests {
 		}
 	
 	}
-	
-	@Test
-	public void testSelectAllIce() {
-		List<HashMap> result = icedao.selectAllIce();
-		assertEquals(266, result.size());
-	}
-
 	/*
 	@Test
 	public void testSelectCategory() {
